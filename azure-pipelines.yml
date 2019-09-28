@@ -1,91 +1,21 @@
+# Node.js
+# Build a general Node.js project with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
 trigger:
 - master
-
-pr:
-- master
-
-strategy:
-  matrix:
-    node_10_x:
-      node_version: 10.x
-    node_12_x:
-      node_version: 12.x
-  maxParallel: 2
 
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-- group: 'spk-vg'
-
 steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: "$(node_version)"
-    displayName: "Install Node.js"
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
 
-  - script: |
-      curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-    displayName: "Install az-cli"
-
-  - script: |
-      yarn
-    displayName: "YARN INSTALL"
-
-  - script: |
-      yarn lint
-    displayName: "YARN LINT"
-
-  - script: |
-      yarn build
-    displayName: "YARN BUILD"
-
-  - script: |
-      yarn test
-    displayName: "YARN TEST"
-
-  - task: PublishCodeCoverageResults@1
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
-      reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
-    condition: and(eq(variables['Agent.JobStatus'], 'Succeeded'), endsWith(variables['Agent.JobName'], 'node_12_x'))
-
-  - task: PublishTestResults@2
-    inputs:
-      testResultsFormat: 'JUnit'
-      testResultsFiles: '**/junit.xml' 
-    condition: and(eq(variables['Agent.JobStatus'], 'Succeeded'), endsWith(variables['Agent.JobName'], 'node_12_x'))
-
-  - task: PublishPipelineArtifact@1
-    inputs:
-      path: $(System.DefaultWorkingDirectory)/dist/spk-linux
-      artifact: spk_linux_node_12
-    condition: and(eq(variables['Agent.JobStatus'], 'Succeeded'), endsWith(variables['Agent.JobName'], 'node_12_x'))
-
-  - bash: |
-      [ -z "$COVERAGE_VARIANCE" ] && { echo "Missing COVERAGE_VARIANCE variable"; exit 1; }
-      echo "Code coverage variance value is: $COVERAGE_VARIANCE"
-    displayName: 'Build quality pre-validation'  
-    failOnStderr: true
-    env:
-        COVERAGE_VARIANCE: $(COVERAGE_VARIANCE)
-    condition: and(eq(variables['Agent.JobStatus'], 'Succeeded'), endsWith(variables['Agent.JobName'], 'node_12_x'))
-
-  - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@6
-    displayName: 'Check build quality'
-    inputs:
-      checkWarnings: false
-      warningFailOption: fixed
-      warningFilters: ''
-      showStatistics: true
-      checkCoverage: true
-      coverageFailOption: build # We are comparing against the previous build in baseBranchRef
-      coverageType: branches # We are looking at code branch coverage, not line coverage
-      coverageDeltaType: percentage
-      allowCoverageVariance: true
-      coverageVariance: $(COVERAGE_VARIANCE) # Prefer a value less 1.00
-      baseDefinitionId: $(SPK_DEFINITION_ID)
-      baseBranchRef: refs/heads/master
-      runTitle: 'Code Coverage Evaluation'
-    condition: and(eq(variables['Agent.JobStatus'], 'Succeeded'), endsWith(variables['Agent.JobName'], 'node_12_x'))
+- script: |
+    npm install
+    npm run build
+  displayName: 'npm install and build'
