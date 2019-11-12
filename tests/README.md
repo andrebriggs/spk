@@ -6,8 +6,8 @@ This directory contains shell scripts that execute on a build agent and run `spk
 - This file orchestrates the scenarios and is designed to fail on first error.
 
 `functions.sh`
-- This file is has simple functions that are reused by `validations.sh`.
 
+- This file has simple functions that are reused by `validations.sh`.
 
 # Scenarios Exercised So Far
 - As a developer create a mono-repo and add services
