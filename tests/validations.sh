@@ -126,5 +126,5 @@ git push --set-upstream origin $branchName
 # Create a PR for the change
 spk service create-revision -t "Automated Test PR" -d "Adding my new file" --org-name $AZDO_ORG --personal-access-token $ACCESS_TOKEN_SECRET  --remote-url $remote_repo_url >> $TEST_WORKSPACE/log.txt
 
-# TODO: Get the id of the pr created and set the PR to be approved 
-# az repos pr update --id --bypass-policy --auto-complete   
+# TODO: Get the id of the pr created and set the PR to be approved
+# az repos pr update --id --bypass-policy --auto-complete
