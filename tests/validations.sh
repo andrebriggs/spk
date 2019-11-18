@@ -81,7 +81,22 @@ echo "git push"
 git push -u origin --all
 cd ..
 
-# *** TODO: Get ride of duplication
+# *** TODO: Get rid of duplication
+
+# First we should check hld pipelines exist. If there is a pipeline with the same name we should delete it
+hld_pipeline_exists $AZDO_ORG_URL $AZDO_PROJECT $hld_dir $manifests_dir
+
+# Create the hld to manifest pipeline
+echo "hld_dir $hld_dir"
+echo "hld_repo_url $hld_repo_url"
+echo "manifest_repo_url $manifest_repo_url"
+spk hld install-manifest-pipeline -o $AZDO_ORG -d $AZDO_PROJECT -p $ACCESS_TOKEN_SECRET -r $hld_dir -u https://$hld_repo_url -m https://$manifest_repo_url
+
+# Verify the pipeline was created
+pipeline_created=$(az pipelines show --name $hld_dir-to-$manifests_dir --org $AZDO_ORG_URL --p $AZDO_PROJECT)
+
+# Verify the pipeline run was successful
+verify_pipeline_with_poll $AZDO_ORG_URL $AZDO_PROJECT $hld_dir-to-$manifests_dir 180 25
 
 # App Code Mono Repo set up 
 mkdir $mono_repo_dir
