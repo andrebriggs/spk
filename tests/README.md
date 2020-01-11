@@ -93,7 +93,11 @@ This directory contains shell scripts that execute on a build agent and run `spk
      https://raw.githubusercontent.com/MY_ORG/spk/master/tests/functions.sh)
    - TEST_SCRIPT (e.g.
      https://raw.githubusercontent.com/MY_ORG/spk/master/tests/validations.sh)
-3. Azure CLI with Azure DevOps Extension
+
+- TEST_SCRIPT2 (e.g.
+  https://raw.githubusercontent.com/MY_ORG/spk/master/tests/infra-validations.sh)
+
+3. [Azure CLI with Azure DevOps Extension](https://docs.microsoft.com/en-us/azure/devops/cli/?view=azure-devops)
    - Provided in pipeline yaml
 4. SPK Binary
    - Provided in pipeline yaml
