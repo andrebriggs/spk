@@ -67,7 +67,7 @@ stages:
 
         # Include dependent scripts
         . ./functions.sh
-
+        ls -la
         # Run the test
         bash ./validations.sh
 
